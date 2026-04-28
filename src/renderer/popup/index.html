@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Su cosa stai lavorando?</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+  <style>
+    body { padding: 16px; }
+    .header { margin-bottom: 12px; }
+    .search { margin-bottom: 10px; }
+    .task-list {
+      max-height: 320px;
+      overflow-y: auto;
+      border: 1px solid #e3e5e8;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .task-item {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #eef0f2;
+    }
+    .task-item:hover { background: #eef5ff; }
+    .task-item .key { font-weight: 600; color: #0052cc; }
+    .task-item .summary { color: #1f2329; margin-top: 2px; }
+    .task-item .status { font-size: 11px; color: #5e6772; margin-top: 2px; }
+    .task-item.last-used { background: #fff7e6; }
+    .footer { display: flex; gap: 8px; margin-top: 12px; }
+    .footer button { flex: 1; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h3>Su cosa stai lavorando?</h3>
+    <div class="muted" id="ctx"></div>
+  </div>
+
+  <div class="search">
+    <input id="filter" type="text" placeholder="Filtra task..." autofocus />
+  </div>
+
+  <div id="banner" class="banner error" style="display:none"></div>
+
+  <div id="taskList" class="task-list">
+    <div class="empty">Caricamento task...</div>
+  </div>
+
+  <div class="footer">
+    <button id="btnRefresh">Aggiorna</button>
+    <button id="btnIgnore" title="Assegna il tempo all'ultimo task">Ignora</button>
+    <button id="btnSkip" class="danger">Skip (non contare)</button>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

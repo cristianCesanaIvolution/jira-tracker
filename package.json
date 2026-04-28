@@ -1,0 +1,26 @@
+{
+  "name": "jira-time-tracker",
+  "version": "0.1.0",
+  "description": "Desktop time tracker for Jira tasks (Windows)",
+  "main": "src/main/index.js",
+  "author": "Cristian Cesana",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "rebuild": "electron-rebuild -f -w better-sqlite3",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "auto-launch": "^5.0.6",
+    "axios": "^1.7.7",
+    "better-sqlite3": "^11.5.0"
+  },
+  "devDependencies": {
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
+    "@electron/rebuild": "^3.7.0"
+  }
+}

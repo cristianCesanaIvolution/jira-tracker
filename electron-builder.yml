@@ -1,0 +1,21 @@
+appId: com.cristiancesana.jiratimetracker
+productName: Jira Time Tracker
+directories:
+  output: dist
+files:
+  - src/**/*
+  - assets/**/*
+  - package.json
+  - "!**/*.map"
+asar: true
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+  icon: assets/tray-icon.png
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true

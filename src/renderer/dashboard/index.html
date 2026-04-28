@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Jira Time Tracker — Dashboard</title>
+  <link rel="stylesheet" href="../shared/styles.css" />
+  <style>
+    .container { padding: 20px; max-width: 1100px; margin: 0 auto; }
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .summary-grid .card .label { font-size: 11px; text-transform: uppercase; color: #5e6772; }
+    .summary-grid .card .value { font-size: 22px; font-weight: 600; margin-top: 4px; }
+    .filters { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .filters select, .filters input { width: auto; }
+    td.duration { font-variant-numeric: tabular-nums; }
+    td.actions { white-space: nowrap; }
+    input.duration-input { width: 80px; }
+    input.comment-input { width: 100%; }
+    .by-task table { margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Jira Time Tracker</h2>
+
+    <div id="banner" style="display:none"></div>
+
+    <div class="filters card">
+      <label>Periodo:</label>
+      <select id="period">
+        <option value="today">Oggi</option>
+        <option value="week" selected>Questa settimana</option>
+        <option value="month">Questo mese</option>
+        <option value="all">Tutto</option>
+      </select>
+      <button id="btnRefresh">Ricarica</button>
+      <span style="flex:1"></span>
+      <button id="btnSyncAll" class="primary">Registra tutto su Jira</button>
+    </div>
+
+    <div class="summary-grid">
+      <div class="card">
+        <div class="label">Tempo totale</div>
+        <div class="value" id="sumTotal">—</div>
+      </div>
+      <div class="card">
+        <div class="label">Da sincronizzare</div>
+        <div class="value" id="sumPending">—</div>
+      </div>
+      <div class="card">
+        <div class="label">GiÃ  registrato</div>
+        <div class="value" id="sumSynced">—</div>
+      </div>
+    </div>
+
+    <div class="card by-task">
+      <h3>Riepilogo per task</h3>
+      <table id="tblByTask">
+        <thead>
+          <tr>
+            <th>Task</th>
+            <th>Tempo totale</th>
+            <th>Sincronizzato</th>
+            <th>Da sincronizzare</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>Worklog (preview)</h3>
+      <div class="muted" style="margin-bottom:8px">
+        Le entry consecutive sullo stesso task sono aggregate in un'unica riga.
+        Gli skip non rompono la consecutivitÃ . Modifica durata e commento prima di sincronizzare.
+      </div>
+      <table id="tblGroups">
+        <thead>
+          <tr>
+            <th>Inizio</th>
+            <th>Task</th>
+            <th>Durata (min)</th>
+            <th>Commento</th>
+            <th>Stato</th>
+            <th>Azioni</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="renderer.js"></script>
+</body>
+</html>

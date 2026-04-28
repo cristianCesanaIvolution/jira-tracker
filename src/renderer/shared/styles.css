@@ -1,0 +1,87 @@
+* { box-sizing: border-box; }
+body {
+  font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f5f6f8;
+  color: #1f2329;
+  font-size: 14px;
+}
+h1, h2, h3 { margin: 0 0 12px; }
+button {
+  cursor: pointer;
+  border: 1px solid #c8ccd2;
+  background: #fff;
+  color: #1f2329;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+button:hover { background: #f0f2f5; }
+button.primary {
+  background: #2684ff;
+  color: #fff;
+  border-color: #2684ff;
+}
+button.primary:hover { background: #1f73e0; }
+button.danger {
+  background: #de350b;
+  color: #fff;
+  border-color: #de350b;
+}
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+input[type="text"], input[type="password"], input[type="email"], input[type="number"], textarea, select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #c8ccd2;
+  border-radius: 6px;
+  font-size: 14px;
+  background: #fff;
+}
+.row { display: flex; gap: 10px; align-items: center; }
+.col { display: flex; flex-direction: column; gap: 8px; }
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 12px; }
+.field label { font-weight: 600; font-size: 12px; color: #5e6772; text-transform: uppercase; letter-spacing: .03em; }
+.muted { color: #6b7480; font-size: 12px; }
+.card {
+  background: #fff;
+  border: 1px solid #e3e5e8;
+  border-radius: 8px;
+  padding: 16px;
+}
+.toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eef0f2; vertical-align: top; }
+th { background: #fafbfc; font-size: 12px; text-transform: uppercase; color: #5e6772; }
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+.badge.synced { background: #e3fcef; color: #006644; }
+.badge.pending { background: #fff7e6; color: #974f00; }
+.badge.skip { background: #f4f5f7; color: #5e6c84; }
+.banner {
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.banner.error { background: #ffebe6; color: #bf2600; border: 1px solid #ffbdad; }
+.banner.success { background: #e3fcef; color: #006644; border: 1px solid #abf5d1; }
+.banner.info { background: #deebff; color: #0747a6; border: 1px solid #b3d4ff; }
+.empty {
+  padding: 30px;
+  text-align: center;
+  color: #6b7480;
+}
