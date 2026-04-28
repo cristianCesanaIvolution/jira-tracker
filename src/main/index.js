@@ -20,6 +20,9 @@ if (!gotLock) {
   });
 
   app.whenReady().then(async () => {
+    if (process.platform === 'win32') {
+      app.setAppUserModelId('com.cristiancesana.jiratimetracker');
+    }
     db.init();
     tray.build();
     registerIpc();

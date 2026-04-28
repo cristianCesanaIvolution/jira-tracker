@@ -1,15 +1,23 @@
 const path = require('path');
-const { BrowserWindow } = require('electron');
+const fs = require('fs');
+const { BrowserWindow, nativeImage } = require('electron');
 
 let dashboardWin = null;
 let settingsWin = null;
 let popupWin = null;
 
 const PRELOAD = path.join(__dirname, 'preload.js');
+const APP_ICON_PATH = path.join(__dirname, '..', '..', 'assets', 'app-icon.png');
+
+function getAppIcon() {
+  if (fs.existsSync(APP_ICON_PATH)) return nativeImage.createFromPath(APP_ICON_PATH);
+  return undefined;
+}
 
 function baseWindowOptions() {
   return {
     autoHideMenuBar: true,
+    icon: getAppIcon(),
     webPreferences: {
       preload: PRELOAD,
       contextIsolation: true,
