@@ -24,7 +24,7 @@ if (!gotLock) {
       app.setAppUserModelId('com.cristiancesana.jiratimetracker');
     }
     db.init();
-    tray.build();
+    tray.build({ onForcePrompt: onForcePrompt });
     registerIpc();
 
     if (!scheduler.isConfigured()) {
@@ -50,6 +50,15 @@ async function onScheduledPrompt() {
   const allowIgnore = scheduler.hasLastTask();
   const result = await windows.openPopup({ allowIgnore });
   scheduler.recordIntervalEnd(result);
+}
+
+async function onForcePrompt() {
+  if (!scheduler.isConfigured()) {
+    notify('Configura le credenziali Jira prima di registrare un task.');
+    windows.openSettings();
+    return;
+  }
+  await scheduler.forcePrompt();
 }
 
 function registerIpc() {

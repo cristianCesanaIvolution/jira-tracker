@@ -114,6 +114,15 @@ function recordIntervalEnd({ kind, taskKey }) {
   return { taskKey: key, durationMinutes };
 }
 
+async function forcePrompt() {
+  if (!isConfigured()) return;
+  if (timerHandle) {
+    clearTimeout(timerHandle);
+    timerHandle = null;
+  }
+  await fire();
+}
+
 function hasLastTask() {
   const last = db.getLastNonSkipEntry();
   return !!(last && last.task_key);
@@ -129,6 +138,7 @@ module.exports = {
   getIntervalMinutes,
   setIntervalMinutes,
   recordIntervalEnd,
+  forcePrompt,
   hasLastTask,
   isConfigured,
   getLastPromptTs,

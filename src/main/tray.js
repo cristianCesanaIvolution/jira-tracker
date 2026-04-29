@@ -19,13 +19,14 @@ function getIcon() {
   return nativeImage.createEmpty();
 }
 
-function build() {
+function build({ onForcePrompt } = {}) {
   if (tray) return tray;
   tray = new Tray(getIcon());
   tray.setToolTip('Jira Time Tracker');
 
   const menu = Menu.buildFromTemplate([
     { label: 'Apri Dashboard', click: () => windows.openDashboard() },
+    { label: 'Update task', click: () => { if (onForcePrompt) onForcePrompt(); } },
     { label: 'Settings', click: () => windows.openSettings() },
     { type: 'separator' },
     { label: 'Esci', click: () => { app.isQuitting = true; app.quit(); } },
