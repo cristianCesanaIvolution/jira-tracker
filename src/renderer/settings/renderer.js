@@ -5,6 +5,7 @@ function showBanner(kind, msg) {
   b.className = `banner ${kind}`;
   b.textContent = msg;
   b.style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function hideBanner() {
