@@ -124,7 +124,12 @@ function registerIpc() {
   ipcMain.handle('entries:get', (_e, from, to) => db.getTimeEntries({ from, to }));
   ipcMain.handle('entries:getAggregated', (_e, from, to) => {
     const entries = db.getTimeEntries({ from, to });
-    return { entries, groups: aggregateEntries(entries) };
+    const groups = aggregateEntries(entries);
+    const summaryByKey = new Map(db.getTasksCache().map((t) => [t.key, t.summary]));
+    for (const g of groups) {
+      g.summary = g.task_key ? summaryByKey.get(g.task_key) || null : null;
+    }
+    return { entries, groups };
   });
   ipcMain.handle('entries:update', (_e, id, fields) => {
     db.updateEntry(id, fields);

@@ -74,8 +74,9 @@ function renderByTask() {
   const map = new Map();
   for (const g of lastData.groups) {
     const k = g.task_key || '(skip)';
-    if (!map.has(k)) map.set(k, { total: 0, synced: 0, pending: 0 });
+    if (!map.has(k)) map.set(k, { total: 0, synced: 0, pending: 0, summary: g.summary || '' });
     const m = map.get(k);
+    if (!m.summary && g.summary) m.summary = g.summary;
     m.total += g.duration_minutes;
     if (g.synced) m.synced += g.duration_minutes;
     else m.pending += g.duration_minutes;
@@ -85,17 +86,18 @@ function renderByTask() {
     .map(([k, v]) => `
       <tr>
         <td>${escapeHtml(k)}</td>
+        <td>${escapeHtml(v.summary)}</td>
         <td class="duration">${fmtMin(v.total)}</td>
         <td class="duration">${fmtMin(v.synced)}</td>
         <td class="duration">${fmtMin(v.pending)}</td>
       </tr>`).join('');
-  $('tblByTask').querySelector('tbody').innerHTML = rows || '<tr><td colspan="4" class="empty">Nessun dato.</td></tr>';
+  $('tblByTask').querySelector('tbody').innerHTML = rows || '<tr><td colspan="5" class="empty">Nessun dato.</td></tr>';
 }
 
 function renderGroups() {
   const tbody = $('tblGroups').querySelector('tbody');
   if (!lastData.groups.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty">Nessun worklog.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">Nessun worklog.</td></tr>';
     return;
   }
   tbody.innerHTML = lastData.groups.map((g, idx) => {
@@ -107,9 +109,10 @@ function renderGroups() {
       <tr data-idx="${idx}">
         <td>${escapeHtml(fmtTime(g.start_time))}</td>
         <td><strong>${escapeHtml(g.task_key)}</strong></td>
+        <td>${escapeHtml(g.summary || '')}</td>
         <td>
-          <input type="number" min="1" class="duration-input" data-field="duration"
-                 value="${g.duration_minutes}" ${g.synced ? 'disabled' : ''} />
+          <input type="number" min="0.01" step="0.25" class="duration-input" data-field="duration"
+                 value="${(g.duration_minutes / 60).toFixed(2)}" ${g.synced ? 'disabled' : ''} />
         </td>
         <td>
           <input type="text" class="comment-input" data-field="comment"
@@ -131,7 +134,10 @@ function renderGroups() {
 async function syncRow(idx, tr) {
   const g = lastData.groups[idx];
   if (!g || g.synced) return;
-  const duration = parseInt(tr.querySelector('input[data-field="duration"]').value, 10) || g.duration_minutes;
+  const hours = parseFloat(tr.querySelector('input[data-field="duration"]').value);
+  const duration = Number.isFinite(hours) && hours > 0
+    ? Math.max(1, Math.round(hours * 60))
+    : g.duration_minutes;
   const comment = tr.querySelector('input[data-field="comment"]').value;
   const btn = tr.querySelector('.btn-sync');
   btn.disabled = true;
