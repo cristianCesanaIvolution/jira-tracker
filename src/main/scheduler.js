@@ -7,6 +7,7 @@ const MIN_INTERVAL_MIN = 1;
 let timerHandle = null;
 let onPromptCb = null;
 let lastPromptTs = null;
+let nextFireTs = null;
 
 function getIntervalMinutes() {
   const v = parseInt(db.getConfig('prompt_interval_minutes', String(DEFAULT_INTERVAL_MIN)), 10);
@@ -37,12 +38,17 @@ function reschedule() {
     clearTimeout(timerHandle);
     timerHandle = null;
   }
-  if (!isConfigured()) return;
+  if (!isConfigured()) {
+    nextFireTs = null;
+    return;
+  }
   const intervalMs = getIntervalMinutes() * 60 * 1000;
+  nextFireTs = Date.now() + intervalMs;
   timerHandle = setTimeout(fire, intervalMs);
 }
 
 async function fire() {
+  nextFireTs = null;
   try {
     // refresh task cache just before prompting
     try {
@@ -132,6 +138,15 @@ function getLastPromptTs() {
   return lastPromptTs;
 }
 
+function getNextPromptInfo() {
+  return {
+    nextFireTs,
+    intervalMinutes: getIntervalMinutes(),
+    configured: isConfigured(),
+    running: !!timerHandle,
+  };
+}
+
 module.exports = {
   start,
   reschedule,
@@ -142,4 +157,5 @@ module.exports = {
   hasLastTask,
   isConfigured,
   getLastPromptTs,
+  getNextPromptInfo,
 };

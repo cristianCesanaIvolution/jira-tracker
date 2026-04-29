@@ -25,5 +25,7 @@ contextBridge.exposeInMainWorld('api', {
     getAggregated: (from, to) => ipcRenderer.invoke('entries:getAggregated', from, to),
     updateEntry: (id, fields) => ipcRenderer.invoke('entries:update', id, fields),
     syncGroup: (group) => ipcRenderer.invoke('entries:syncGroup', group),
+    deleteGroup: (entryIds) => ipcRenderer.invoke('entries:deleteGroup', entryIds),
+    getNextPromptInfo: () => ipcRenderer.invoke('scheduler:getNextPromptInfo'),
   },
 });

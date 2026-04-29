@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 
 let lastData = { entries: [], groups: [] };
+let nextInfo = null;
 
 function showBanner(kind, msg) {
   const b = $('banner');
@@ -43,6 +44,37 @@ function fmtMin(min) {
   return `${m}m`;
 }
 
+function formatRemaining(ms) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const h = Math.floor(total / 3600);
+  const m = Math.floor((total % 3600) / 60);
+  const s = total % 60;
+  const pad = (n) => String(n).padStart(2, '0');
+  if (h) return `${h}h ${pad(m)}m ${pad(s)}s`;
+  if (m) return `${m}m ${pad(s)}s`;
+  return `${s}s`;
+}
+
+async function refreshNextInfo() {
+  try {
+    nextInfo = await window.api.dashboard.getNextPromptInfo();
+  } catch (_) {
+    nextInfo = null;
+  }
+  tickCountdown();
+}
+
+function tickCountdown() {
+  const el = document.getElementById('nextPromptInfo');
+  if (!el) return;
+  if (!nextInfo) { el.textContent = 'Prossimo popup: —'; return; }
+  if (!nextInfo.configured) { el.textContent = 'Configura le credenziali Jira'; return; }
+  if (nextInfo.nextFireTs == null) { el.textContent = 'Popup in corso...'; return; }
+  const remaining = nextInfo.nextFireTs - Date.now();
+  if (remaining <= 0) { el.textContent = `Popup imminente... (intervallo ${nextInfo.intervalMinutes}m)`; return; }
+  el.textContent = `Prossimo popup tra ${formatRemaining(remaining)} (intervallo ${nextInfo.intervalMinutes}m)`;
+}
+
 function fmtTime(ts) {
   const d = new Date(ts);
   const pad = (n) => String(n).padStart(2, '0');
@@ -56,6 +88,7 @@ async function load() {
   renderSummary();
   renderByTask();
   renderGroups();
+  await refreshNextInfo();
 }
 
 function renderSummary() {
@@ -121,6 +154,7 @@ function renderGroups() {
         <td>${statusBadge}</td>
         <td class="actions">
           <button class="primary btn-sync" ${g.synced ? 'disabled' : ''}>Registra</button>
+          <button class="btn-delete" ${g.synced ? 'disabled' : ''} title="Elimina">Elimina</button>
         </td>
       </tr>`;
   }).join('');
@@ -128,7 +162,23 @@ function renderGroups() {
   tbody.querySelectorAll('tr').forEach((tr) => {
     const idx = parseInt(tr.dataset.idx, 10);
     tr.querySelector('.btn-sync')?.addEventListener('click', () => syncRow(idx, tr));
+    tr.querySelector('.btn-delete')?.addEventListener('click', () => deleteRow(idx));
   });
+}
+
+async function deleteRow(idx) {
+  const g = lastData.groups[idx];
+  if (!g || g.synced) return;
+  const label = g.task_key || '(skip)';
+  const dur = fmtMin(g.duration_minutes);
+  if (!confirm(`Eliminare l'entry ${label} (${dur}) del ${fmtTime(g.start_time)}?`)) return;
+  const res = await window.api.dashboard.deleteGroup(g.entry_ids);
+  if (res.ok) {
+    showBanner('success', `Entry ${label} eliminata.`);
+    await load();
+  } else {
+    showBanner('error', `Errore eliminazione: ${res.error || 'sconosciuto'}`);
+  }
 }
 
 async function syncRow(idx, tr) {
@@ -175,5 +225,8 @@ async function syncAll() {
 $('period').addEventListener('change', load);
 $('btnRefresh').addEventListener('click', load);
 $('btnSyncAll').addEventListener('click', syncAll);
+
+setInterval(tickCountdown, 1000);
+setInterval(refreshNextInfo, 30000);
 
 load();

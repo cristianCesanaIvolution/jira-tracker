@@ -93,6 +93,7 @@ function registerIpc() {
 
   ipcMain.handle('scheduler:getInterval', () => scheduler.getIntervalMinutes());
   ipcMain.handle('scheduler:setInterval', (_e, min) => scheduler.setIntervalMinutes(min));
+  ipcMain.handle('scheduler:getNextPromptInfo', () => scheduler.getNextPromptInfo());
 
   ipcMain.handle('autostart:get', () => autolaunch.isEnabled());
   ipcMain.handle('autostart:set', (_e, enabled) => {
@@ -134,6 +135,10 @@ function registerIpc() {
   ipcMain.handle('entries:update', (_e, id, fields) => {
     db.updateEntry(id, fields);
     return { ok: true };
+  });
+  ipcMain.handle('entries:deleteGroup', (_e, entryIds) => {
+    const deleted = db.deleteEntries(entryIds || []);
+    return { ok: true, deleted };
   });
   ipcMain.handle('entries:syncGroup', async (_e, group) => {
     if (!group.task_key) return { ok: false, error: 'No task key' };

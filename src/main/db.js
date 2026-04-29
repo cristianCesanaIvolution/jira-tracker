@@ -152,6 +152,16 @@ function updateEntry(id, fields) {
   init().prepare(`UPDATE time_entries SET ${sets.join(',')} WHERE id=@id`).run(params);
 }
 
+function deleteEntries(ids) {
+  if (!ids || !ids.length) return 0;
+  const d = init();
+  const placeholders = ids.map(() => '?').join(',');
+  const info = d
+    .prepare(`DELETE FROM time_entries WHERE synced_to_jira=0 AND id IN (${placeholders})`)
+    .run(...ids);
+  return info.changes;
+}
+
 function logSync(level, message, detail) {
   init()
     .prepare('INSERT INTO sync_log(ts,level,message,detail) VALUES(?,?,?,?)')
@@ -172,5 +182,6 @@ module.exports = {
   getLastEntry,
   markEntrySynced,
   updateEntry,
+  deleteEntries,
   logSync,
 };

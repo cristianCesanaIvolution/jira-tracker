@@ -38,6 +38,7 @@
         <option value="all">Tutto</option>
       </select>
       <button id="btnRefresh">Ricarica</button>
+      <span id="nextPromptInfo" class="muted" style="margin-left:12px">Prossimo popup: —</span>
       <span style="flex:1"></span>
       <button id="btnSyncAll" class="primary">Registra tutto su Jira</button>
     </div>
@@ -77,7 +78,7 @@
       <h3>Worklog (preview)</h3>
       <div class="muted" style="margin-bottom:8px">
         Le entry consecutive sullo stesso task sono aggregate in un'unica riga.
-        Gli skip non rompono la consecutivitÃ . Modifica durata e commento prima di sincronizzare.
+        Gli skip non rompono la consecutività . Modifica durata e commento prima di sincronizzare.
       </div>
       <table id="tblGroups">
         <thead>
