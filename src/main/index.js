@@ -151,8 +151,21 @@ function registerIpc() {
       });
       const worklogId = result?.id || null;
       if (group.entry_ids && group.entry_ids.length) {
-        for (const id of group.entry_ids) db.markEntrySynced(id, worklogId);
-        if (group.comment != null) db.updateEntry(group.entry_ids[0], { comment: group.comment });
+        const ids = group.entry_ids;
+        const originalTotal = ids.reduce((sum, id) => {
+          const e = db.getEntryById(id);
+          return sum + (e ? e.duration_minutes : 0);
+        }, 0);
+        const delta = group.duration_minutes - originalTotal;
+        if (delta !== 0) {
+          const first = db.getEntryById(ids[0]);
+          if (first) {
+            const newFirstDur = Math.max(0, first.duration_minutes + delta);
+            db.updateEntry(ids[0], { duration_minutes: newFirstDur });
+          }
+        }
+        for (const id of ids) db.markEntrySynced(id, worklogId);
+        if (group.comment != null) db.updateEntry(ids[0], { comment: group.comment });
       }
       db.logSync('info', 'Worklog posted', {
         taskKey: group.task_key,

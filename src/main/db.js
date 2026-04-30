@@ -152,6 +152,10 @@ function updateEntry(id, fields) {
   init().prepare(`UPDATE time_entries SET ${sets.join(',')} WHERE id=@id`).run(params);
 }
 
+function getEntryById(id) {
+  return init().prepare('SELECT * FROM time_entries WHERE id=?').get(id);
+}
+
 function deleteEntries(ids) {
   if (!ids || !ids.length) return 0;
   const d = init();
@@ -182,6 +186,7 @@ module.exports = {
   getLastEntry,
   markEntrySynced,
   updateEntry,
+  getEntryById,
   deleteEntries,
   logSync,
 };
